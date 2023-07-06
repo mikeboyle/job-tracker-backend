@@ -24,6 +24,21 @@ VALUES
   ('5677146f-cae5-4d2d-acde-6ace4431186c', 'userC@pursuit.org'),
   ('bef45247-e990-4ad5-9c32-2e8eb0611841', 'userD@pursuit.org');
 
+INSERT INTO roles (id, type)
+VALUES
+  ('ee73db2b-e98e-492b-b3a6-e427c425857c', 'free'),
+  ('d04da80f-69cf-4a38-a2af-b02215492b8d', 'admin');
+
+INSERT INTO users_roles (id, user_id, role_id)
+VALUES
+  ('9336f688-62ba-496b-8b58-8bec69b51fe8', '70be120e-0707-4488-a980-0ce98a910817', 'ee73db2b-e98e-492b-b3a6-e427c425857c'), --mike, free
+  ('e67a4d77-0352-4930-a811-243432925869', '70be120e-0707-4488-a980-0ce98a910817', 'd04da80f-69cf-4a38-a2af-b02215492b8d'), --mike, admin
+  ('c6de7c9f-b3f1-448f-920b-5eed81e3bc19', '6a730847-3bed-4051-9fbf-215eddd3bcc8', 'ee73db2b-e98e-492b-b3a6-e427c425857c'), --userA, free
+  ('e3e1aee2-5a6c-4e39-8769-cd5cfd752d4a', '2e9e7434-a39d-48e9-849a-eb5809169f4c', 'ee73db2b-e98e-492b-b3a6-e427c425857c'), --userB, free
+  ('159c0a65-7a10-45d1-95d3-e5a377857e24', '5677146f-cae5-4d2d-acde-6ace4431186c', 'ee73db2b-e98e-492b-b3a6-e427c425857c'), --userC, free
+  ('fb6c4cb2-54ad-4ad0-8c6d-be5190251f45', 'bef45247-e990-4ad5-9c32-2e8eb0611841', 'ee73db2b-e98e-492b-b3a6-e427c425857c'); --userD, free
+
+
 INSERT INTO job_statuses (id, status)
 VALUES
   ('7cd9e36e-7119-42a1-8065-018692f04914', 'open'),
@@ -84,11 +99,3 @@ VALUES
   ('068779b2-f48a-4a0c-9c06-e60c7dbff483', 'e21932d5-6158-4153-ac20-aa719adeb4f8', '6a730847-3bed-4051-9fbf-215eddd3bcc8', 'f610b0bc-f4f4-4680-951f-8a53d472865b'),--Metaverse, userA, onsite
   ('36ef49b9-af8a-4eba-8bad-c38189ba429a', 'e21932d5-6158-4153-ac20-aa719adeb4f8', '5677146f-cae5-4d2d-acde-6ace4431186c', '38d0d734-e093-43f0-ab98-2ee6e4fd5e79'),--Metaverse, userC, rejected
   ('0ec31d1a-d0d9-4b99-a9e8-4a46cbe572f9', 'e21932d5-6158-4153-ac20-aa719adeb4f8', '70be120e-0707-4488-a980-0ce98a910817', '42faf919-8991-4e8e-81ff-dc90dcfe59a3');--Metaverse, mike, recruiter_screen 
-
-
-
-
-
-
-
-

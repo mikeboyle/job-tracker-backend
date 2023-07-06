@@ -1,0 +1,22 @@
+{
+  "name": "job-tracker-backend",
+  "version": "1.0.0",
+  "description": "The API for a job tracker application. The API will store and serve information that helps users learn what jobs are available and keep track of the job applications they have made.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mikeboyle/job-tracker-backend.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mikeboyle/job-tracker-backend/issues"
+  },
+  "homepage": "https://github.com/mikeboyle/job-tracker-backend#readme"
+}

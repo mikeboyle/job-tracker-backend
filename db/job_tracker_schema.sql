@@ -4,6 +4,7 @@ DROP TRIGGER IF EXISTS set_ts_job_notes ON job_notes;
 DROP TRIGGER IF EXISTS set_ts_applications ON applications;
 DROP TRIGGER IF EXISTS set_ts_application_notes ON application_notes;
 DROP VIEW IF EXISTS applications_joined;
+DROP VIEW IF EXISTS jobs_joined;
 
 --drop tables
 DROP TABLE IF EXISTS application_notes;
@@ -154,7 +155,7 @@ EXECUTE PROCEDURE trigger_set_timestamp();
 
 --VIEWS to simplify querying
 --SELECT FROM <view name> will call the view's SQL
---DO NOT do insert operations on a view
+--DO NOT do insert, update, etc. operations on a view
 CREATE VIEW applications_joined AS
 SELECT applications.*,
 	   users.email AS user_email,
@@ -171,3 +172,16 @@ JOIN application_statuses
 ON applications.application_status_id = application_statuses.id
 JOIN users
 ON applications.user_id = users.id;
+
+CREATE VIEW jobs_joined AS
+SELECT jobs.*,
+	   companys.name AS company_name,
+	   array_agg(locations.name) AS locations
+FROM jobs
+JOIN companys
+ON jobs.company_id = companys.id
+JOIN job_locations
+ON jobs.id = job_locations.job_id
+JOIN locations
+ON job_locations.location_id = locations.id
+GROUP BY jobs.id, companys.name;

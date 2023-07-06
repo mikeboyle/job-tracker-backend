@@ -10,7 +10,6 @@ It will also help users understand who is applying to which jobs, who is applyin
 - I can enter a search term to filter the list of companies
 - I can sort the companies by name (ascending or descending)
 - I can add a company to the list of companies
-- I can 
 
 ### Jobs
 - I can see a list of jobs.

@@ -1,4 +1,11 @@
+--drop triggers and views
+DROP TRIGGER IF EXISTS set_ts_jobs ON jobs;
+DROP TRIGGER IF EXISTS set_ts_job_notes ON job_notes;
+DROP TRIGGER IF EXISTS set_ts_applications ON applications;
+DROP TRIGGER IF EXISTS set_ts_application_notes ON application_notes;
 DROP VIEW IF EXISTS applications_joined;
+
+--drop tables
 DROP TABLE IF EXISTS application_notes;
 DROP TABLE IF EXISTS applications;
 DROP TABLE IF EXISTS job_notes;
@@ -12,15 +19,16 @@ DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS locations;
 DROP TABLE IF EXISTS companys;
 
+--create tables
 CREATE TABLE jobs (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   company_id uuid,
   url text,
   description text,
-  posted_date timestamptz,
+  posted_date timestamptz NOT NULL DEFAULT now(),
   deadline timestamptz,
-  created_at timestamptz,
-  updated_at timestamptz,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now(),
   job_status_id uuid
 );
 
@@ -45,8 +53,8 @@ CREATE TABLE job_notes (
   job_id uuid,
   user_id uuid,
   text text,
-  created_at timestamptz,
-  updated_at timestamptz
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now()
 );
 
 CREATE TABLE companys (
@@ -59,9 +67,9 @@ CREATE TABLE applications (
   job_id uuid,
   user_id uuid,
   application_status_id uuid,
-  date_applied timestamptz,
-  created_at timestamptz,
-  updated_at timestamptz
+  date_applied timestamptz NOT NULL DEFAULT now(),
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now()
 );
 
 CREATE TABLE application_statuses (
@@ -74,8 +82,8 @@ CREATE TABLE application_notes (
   user_id uuid,
   application_id uuid,
   text text,
-  created_at timestamptz,
-  updated_at timestamptz
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now()
 );
 
 CREATE TABLE users (
@@ -94,33 +102,59 @@ CREATE TABLE users_roles (
   role_id uuid
 );
 
+--foreign keys
 ALTER TABLE jobs ADD FOREIGN KEY (company_id) REFERENCES companys (id);
-
 ALTER TABLE jobs ADD FOREIGN KEY (job_status_id) REFERENCES job_statuses (id);
 
 ALTER TABLE applications ADD FOREIGN KEY (job_id) REFERENCES jobs (id);
-
 ALTER TABLE applications ADD FOREIGN KEY (user_id) REFERENCES users (id);
-
 ALTER TABLE applications ADD FOREIGN KEY (application_status_id) REFERENCES application_statuses (id);
 
 ALTER TABLE job_notes ADD FOREIGN KEY (user_id) REFERENCES users (id);
-
 ALTER TABLE job_notes ADD FOREIGN KEY (job_id) REFERENCES jobs (id);
 
 ALTER TABLE application_notes ADD FOREIGN KEY (user_id) REFERENCES users (id);
-
 ALTER TABLE application_notes ADD FOREIGN KEY (application_id) REFERENCES applications (id);
 
 ALTER TABLE job_locations ADD FOREIGN KEY (location_id) REFERENCES locations (id);
-
 ALTER TABLE job_locations ADD FOREIGN KEY (job_id) REFERENCES jobs (id);
 
 ALTER TABLE users_roles ADD FOREIGN KEY (user_id) REFERENCES users (id);
-
 ALTER TABLE users_roles ADD FOREIGN KEY (role_id) REFERENCES roles (id);
 
---VIEWS
+--TRIGGERS to set updated_at timestamps
+--Source: https://x-team.com/blog/automatic-timestamps-with-postgresql/
+CREATE OR REPLACE FUNCTION trigger_set_timestamp()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = now();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER set_ts_jobs
+BEFORE UPDATE ON jobs
+FOR EACH ROW
+EXECUTE PROCEDURE trigger_set_timestamp();
+
+CREATE TRIGGER set_ts_job_notes
+BEFORE UPDATE ON job_notes
+FOR EACH ROW
+EXECUTE PROCEDURE trigger_set_timestamp();
+
+CREATE TRIGGER set_ts_applications
+BEFORE UPDATE ON applications
+FOR EACH ROW
+EXECUTE PROCEDURE trigger_set_timestamp();
+
+CREATE TRIGGER set_ts_application_notes
+BEFORE UPDATE ON application_notes
+FOR EACH ROW
+EXECUTE PROCEDURE trigger_set_timestamp();
+
+--VIEWS to simplify querying
+--SELECT FROM <view name> will call the view's SQL
+--DO NOT do insert operations on a view
 CREATE VIEW applications_joined AS
 SELECT applications.*,
 	   users.email AS user_email,

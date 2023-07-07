@@ -43,6 +43,14 @@ It will also help users understand who is applying to which jobs, who is applyin
 - I can edit a job or company
 - I can delete notes (e.g., for content moderation)
 
+## About permissions
+- In general, a user who creates something should have the power to edit or delete it.
+- Admins need write permissions over everything to prevent chaos and keep the data neat.
+- There is the potential for bad actions, for example marking a job as "closed" so no one 
+other users have the opportunity to apply for it. We can mitigate this by:
+    - not letting users edit an job or application they didn't create (they can add a note instead)
+    - allowing admins write permissions to correct malicious actions like this
+
 ## Endpoints
 |Route|Methods|Notes|
 |-----|-------|-----|

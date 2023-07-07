@@ -60,18 +60,18 @@ VALUES
   ('6144499f-d1ca-413e-a8aa-9456cc6fa344', 'accepted_offer'),
   ('852bd0c7-77ec-4f27-b468-3e60f1b4b143', 'rejected_offer');
 
-INSERT INTO jobs (id, company_id, description, job_status_id)
+INSERT INTO jobs (id, company_id, description, job_status_id, author_id)
 VALUES
-  ('8303379e-edd5-407d-845e-b963179f9f3a', '037700c8-4578-4eaf-bdf6-843a447ceb22', 'L1 SWE', '7cd9e36e-7119-42a1-8065-018692f04914'), -- Google SWE
-  ('2ab6d576-c098-402b-9025-7bcb71610b22', '037700c8-4578-4eaf-bdf6-843a447ceb22', 'Support Engineer', '4b3cbd82-2e97-4e75-8c7d-a3bbf346fbc2'), -- Google Support
-  ('c25f3db2-371e-4155-bc95-d4b4994a50e0', 'e6759489-b21d-4714-b520-a530f33c7bfd', 'Engineer for Siri', '7cd9e36e-7119-42a1-8065-018692f04914'), -- Apple Siri
-  ('61588de0-230a-4c78-b4f0-8c027c882dec', 'e6759489-b21d-4714-b520-a530f33c7bfd', 'ios developer', '7cd9e36e-7119-42a1-8065-018692f04914'), -- Apple ios
-  ('2f0cea47-332d-41f4-8d41-0d164db6bea2', 'ce8b27c7-c9ec-484e-ab30-09a583c628fa', 'Employment instructor', '4b3cbd82-2e97-4e75-8c7d-a3bbf346fbc2'), -- Pursuit employment
-  ('0da4d653-fa68-474d-b4a1-f2423d5ce1ba', 'ce8b27c7-c9ec-484e-ab30-09a583c628fa', 'Part-time tutor', '7cd9e36e-7119-42a1-8065-018692f04914'), -- Pursuit toutor
-  ('f4b1ecd8-c742-4270-8b0f-5d10a3f32aa8', '6d58e2b1-c38e-4d23-ad36-f7eeae323a19', 'Site reliabilty engineer', 'b2990fc8-ddc3-4323-aa72-eb367a3a968f'), --Netflix SRE
-  ('26388962-acc2-45fb-beb5-a175a480574a', '6d58e2b1-c38e-4d23-ad36-f7eeae323a19', 'Back end developer', '7b3c8491-cee3-489b-8407-66ef5ea8eae0'), --Netflix BE
-  ('99b73f6e-26af-40e3-aebb-e177f1733fd1', 'e7bc6ab0-50ff-42d0-ba76-adbd43ddc7c6', 'Machine learning engineer', '7cd9e36e-7119-42a1-8065-018692f04914'), --Amazon ML
-  ('e21932d5-6158-4153-ac20-aa719adeb4f8', 'e3f39560-3c4e-4acf-a863-c288be772e13', 'Metaverse explorer', '7cd9e36e-7119-42a1-8065-018692f04914'); --Meta Metaverse
+  ('8303379e-edd5-407d-845e-b963179f9f3a', '037700c8-4578-4eaf-bdf6-843a447ceb22', 'L1 SWE', '7cd9e36e-7119-42a1-8065-018692f04914', '70be120e-0707-4488-a980-0ce98a910817'), -- Google SWE, posted by mike
+  ('2ab6d576-c098-402b-9025-7bcb71610b22', '037700c8-4578-4eaf-bdf6-843a447ceb22', 'Support Engineer', '4b3cbd82-2e97-4e75-8c7d-a3bbf346fbc2', '70be120e-0707-4488-a980-0ce98a910817'), -- Google Support, posted by mike
+  ('c25f3db2-371e-4155-bc95-d4b4994a50e0', 'e6759489-b21d-4714-b520-a530f33c7bfd', 'Engineer for Siri', '7cd9e36e-7119-42a1-8065-018692f04914', '70be120e-0707-4488-a980-0ce98a910817'), -- Apple Siri, posted by mike
+  ('61588de0-230a-4c78-b4f0-8c027c882dec', 'e6759489-b21d-4714-b520-a530f33c7bfd', 'ios developer', '7cd9e36e-7119-42a1-8065-018692f04914', '6a730847-3bed-4051-9fbf-215eddd3bcc8'), -- Apple ios, posted by userA
+  ('2f0cea47-332d-41f4-8d41-0d164db6bea2', 'ce8b27c7-c9ec-484e-ab30-09a583c628fa', 'Employment instructor', '4b3cbd82-2e97-4e75-8c7d-a3bbf346fbc2', '6a730847-3bed-4051-9fbf-215eddd3bcc8'), -- Pursuit employment, posted by userA
+  ('0da4d653-fa68-474d-b4a1-f2423d5ce1ba', 'ce8b27c7-c9ec-484e-ab30-09a583c628fa', 'Part-time tutor', '7cd9e36e-7119-42a1-8065-018692f04914', '2e9e7434-a39d-48e9-849a-eb5809169f4c'), -- Pursuit toutor, posted by userB
+  ('f4b1ecd8-c742-4270-8b0f-5d10a3f32aa8', '6d58e2b1-c38e-4d23-ad36-f7eeae323a19', 'Site reliabilty engineer', 'b2990fc8-ddc3-4323-aa72-eb367a3a968f', '5677146f-cae5-4d2d-acde-6ace4431186c'), --Netflix SRE, posted by userC
+  ('26388962-acc2-45fb-beb5-a175a480574a', '6d58e2b1-c38e-4d23-ad36-f7eeae323a19', 'Back end developer', '7b3c8491-cee3-489b-8407-66ef5ea8eae0', '5677146f-cae5-4d2d-acde-6ace4431186c'), --Netflix BE, posted by userC
+  ('99b73f6e-26af-40e3-aebb-e177f1733fd1', 'e7bc6ab0-50ff-42d0-ba76-adbd43ddc7c6', 'Machine learning engineer', '7cd9e36e-7119-42a1-8065-018692f04914', 'bef45247-e990-4ad5-9c32-2e8eb0611841'), --Amazon ML, posted by userD
+  ('e21932d5-6158-4153-ac20-aa719adeb4f8', 'e3f39560-3c4e-4acf-a863-c288be772e13', 'Metaverse explorer', '7cd9e36e-7119-42a1-8065-018692f04914', 'bef45247-e990-4ad5-9c32-2e8eb0611841'); --Meta Metaverse, posted by userD
 
 INSERT INTO job_locations (id, job_id, location_id)
 VALUES

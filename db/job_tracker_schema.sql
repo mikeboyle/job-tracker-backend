@@ -27,6 +27,7 @@ CREATE TABLE jobs (
   company_id uuid,
   url text,
   description text,
+  author_id uuid, -- the user who posted the job
   posted_date timestamptz NOT NULL DEFAULT now(),
   deadline timestamptz,
   created_at timestamptz NOT NULL DEFAULT now(),
@@ -122,6 +123,7 @@ CREATE TABLE users_roles (
 --foreign keys
 ALTER TABLE jobs ADD FOREIGN KEY (company_id) REFERENCES companys (id);
 ALTER TABLE jobs ADD FOREIGN KEY (job_status_id) REFERENCES job_statuses (id);
+ALTER TABLE jobs ADD FOREIGN KEY (author_id) REFERENCES users (id);
 
 ALTER TABLE applications ADD FOREIGN KEY (job_id) REFERENCES jobs (id);
 ALTER TABLE applications ADD FOREIGN KEY (user_id) REFERENCES users (id);
@@ -218,7 +220,8 @@ GROUP BY applications.id,
 CREATE VIEW jobs_joined AS
 SELECT jobs.*,
 	   companys.name AS company_name,
-	   array_agg(locations.name) AS locations
+	   array_agg(locations.name) AS locations,
+     users.email AS author_email
 FROM jobs
 JOIN companys
 ON jobs.company_id = companys.id
@@ -226,4 +229,6 @@ JOIN job_locations
 ON jobs.id = job_locations.job_id
 JOIN locations
 ON job_locations.location_id = locations.id
-GROUP BY jobs.id, companys.name;
+JOIN users
+ON jobs.author_id = users.id
+GROUP BY jobs.id, companys.name, users.email;

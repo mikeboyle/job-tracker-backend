@@ -7,6 +7,7 @@ DROP VIEW IF EXISTS applications_joined;
 DROP VIEW IF EXISTS jobs_joined;
 
 --drop tables
+DROP TABLE IF EXISTS application_status_changes;
 DROP TABLE IF EXISTS application_notes;
 DROP TABLE IF EXISTS applications;
 DROP TABLE IF EXISTS job_notes;
@@ -63,19 +64,34 @@ CREATE TABLE companys (
   name varchar(255)
 );
 
+--an application to a job, submitted by a specific user
 CREATE TABLE applications (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   job_id uuid,
   user_id uuid,
-  application_status_id uuid,
-  date_applied timestamptz NOT NULL DEFAULT now(),
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now()
 );
 
+--a set of possible states an application can be in,
+--ex: not started, submitted, got offer, rejected, etc.
 CREATE TABLE application_statuses (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   status varchar(255)
+);
+
+--Each row in this table represents a transition of
+--a specific application from one status to a new status.
+--We can query this table for an application's current status
+--(the most recent created_at timestamp) or a history of the
+--stages and changes the application went through
+CREATE TABLE application_status_changes (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  application_id uuid REFERENCES applications(id),
+  old_status_id uuid, --can be null
+  new_status_id uuid NOT NULL, --cannot be null
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now()
 );
 
 CREATE TABLE application_notes (
@@ -109,7 +125,10 @@ ALTER TABLE jobs ADD FOREIGN KEY (job_status_id) REFERENCES job_statuses (id);
 
 ALTER TABLE applications ADD FOREIGN KEY (job_id) REFERENCES jobs (id);
 ALTER TABLE applications ADD FOREIGN KEY (user_id) REFERENCES users (id);
-ALTER TABLE applications ADD FOREIGN KEY (application_status_id) REFERENCES application_statuses (id);
+
+ALTER TABLE application_status_changes ADD FOREIGN KEY (application_id) REFERENCES applications(id);
+ALTER TABLE application_status_changes ADD FOREIGN KEY (old_status_id) REFERENCES application_statuses(id); --can be null
+ALTER TABLE application_status_changes ADD FOREIGN KEY (new_status_id) REFERENCES application_statuses(id); --cannot be null
 
 ALTER TABLE job_notes ADD FOREIGN KEY (user_id) REFERENCES users (id);
 ALTER TABLE job_notes ADD FOREIGN KEY (job_id) REFERENCES jobs (id);
@@ -156,22 +175,45 @@ EXECUTE PROCEDURE trigger_set_timestamp();
 --VIEWS to simplify querying
 --SELECT FROM <view name> will call the view's SQL
 --DO NOT do insert, update, etc. operations on a view
+
+--applications joined: gets info about an application, including
+--info joined from other tables: company name/id, user email, job description,
+--and the current application status
 CREATE VIEW applications_joined AS
 SELECT applications.*,
-	   users.email AS user_email,
-	   jobs.description AS job_description,
-	   companys.name AS company_name,
-     companys.id AS company_id,
-	   application_statuses.status AS application_status
+  companys.id AS company_id,
+  users.email AS user_email,
+  jobs.description AS job_description,
+  companys.name AS company_name,
+  application_statuses.status AS application_status,
+  last_status_changes.created_at AS status_updated_at
 FROM applications
 JOIN jobs
 ON applications.job_id = jobs.id
 JOIN companys
 ON jobs.company_id = companys.id
+JOIN (
+	--subquery that grabs the most recent status change for each application
+	--source: https://stackoverflow.com/a/14841015/4595654
+	SELECT t1.*
+	FROM application_status_changes t1
+	LEFT JOIN application_status_changes t2
+	ON (t1.application_id = t2.application_id AND t1.created_at < t2.created_at)
+	WHERE t2.created_at IS NULL
+	ORDER BY t1.id
+	) AS last_status_changes
+ON last_status_changes.application_id = applications.id
 JOIN application_statuses
-ON applications.application_status_id = application_statuses.id
+ON last_status_changes.new_status_id = application_statuses.id
 JOIN users
-ON applications.user_id = users.id;
+ON applications.user_id = users.id
+GROUP BY applications.id, 
+		 users.email, 
+		 jobs.description, 
+		 companys.name, 
+		 companys.id,
+		 application_statuses.status,
+		 last_status_changes.created_at;
 
 CREATE VIEW jobs_joined AS
 SELECT jobs.*,
